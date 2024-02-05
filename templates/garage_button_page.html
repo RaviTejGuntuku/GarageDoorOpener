@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Garage Button Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #FF3333; /* Red background */
+            color: #FFFFFF; /* White text color */
+            overflow: hidden; /* Hide overflow for animations */
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* Playful font */
+        }
+
+        #big-button-container {
+            position: relative;
+        }
+
+        #big-button {
+            width: 300px; /* Larger button size */
+            height: 300px;
+            border-radius: 50%;
+            background-color: #FFA500; /* Orange button */
+            color: #FFFFFF; /* White text color */
+            font-size: 24px; /* Adjusted font size */
+            text-align: center;
+            line-height: 300px; /* Vertical alignment for the text */
+            text-decoration: none;
+            display: block;
+            transition: transform 0.3s ease-in-out;
+            animation: pulse 2s infinite alternate; /* Continuous pulse animation */
+        }
+
+        #big-button:disabled {
+            animation: none; /* Stop animation when disabled */
+            background-color: #888; /* Dim the color when disabled */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2); }
+        }
+
+        #big-button:hover:disabled {
+            transform: scale(1); /* Ensure no hover effect when disabled */
+        }
+
+        #big-button:hover {
+            transform: scale(1.1); /* Scale up on hover */
+        }
+
+        #progress-bar-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Initially hidden */
+            pointer-events: none; /* Ignore pointer events when hidden */
+        }
+
+        #progress-svg {
+            width: 300px;
+            height: 300px;
+        }
+
+        #progress-path {
+            fill: none;
+            stroke: #4CAF50; /* Green color for the progress path */
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 0 1500; /* Initial dash array for animation */
+            animation: progress 2s infinite linear; /* Continuous progress path animation */
+        }
+
+        @keyframes progress {
+            0% {
+                stroke-dasharray: 0 1500;
+            }
+            100% {
+                stroke-dasharray: 1500 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form id="action-form" method="post" action="/trigger_action_button" onsubmit="triggerAction(event)">
+        <div id="big-button-container">
+            <div id="progress-bar-container">
+                <svg id="progress-svg" xmlns="http://www.w3.org/2000/svg">
+                    <path id="progress-path"></path>
+                </svg>
+            </div>
+            <button id="big-button" type="submit">Check Garage Door</button>
+        </div>
+    </form>
+
+    <script>
+        function triggerAction(event) {
+            event.preventDefault();
+
+            // Change the button text and adjust the font size
+            document.getElementById('big-button').innerText = 'Please wait: checking status';
+            document.getElementById('big-button').style.fontSize = '16px';
+
+            // Show the progress bar
+            document.getElementById('progress-bar-container').style.display = 'block';
+
+            // Disable the button
+            document.getElementById('big-button').disabled = true;
+
+            // Make an AJAX request to trigger the action on the server side
+            fetch('/trigger_action_button', {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the result to the user
+                alert(data.result);
+            })
+            .catch(error => console.error('Error:', error))
+            .finally(() => {
+                // Re-enable the button, hide the progress bar, and restore the original button text and font size
+                document.getElementById('big-button').disabled = false;
+                document.getElementById('progress-bar-container').style.display = 'none';
+                document.getElementById('big-button').innerText = 'Check Garage Door';
+                document.getElementById('big-button').style.fontSize = '24px';
+            });
+        }
+    </script>
+</body>
+</html>
