@@ -1,13 +1,17 @@
 import requests
+import os
+from dotenv import load_dotenv
 
+
+load_dotenv()
 url = "https://rest-prod.immedia-semi.com"
 
 client_id = 968541
 
 r = requests.post(url + "/api/v5/account/login",
                   data={
-                      "email": "ravikumar.guntuku@gmail.com",
-                      "password": "Fadd3n$6120",
+                      "email": os.getenv("BLINK_USERNAME"),
+                      "password": os.getenv("BLINK_PASSWORD"),
                       "unique_id": client_id,
                       "reauth": True
                   }

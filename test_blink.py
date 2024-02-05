@@ -2,10 +2,13 @@ import asyncio
 from aiohttp import ClientSession
 from blinkpy.blinkpy import Blink
 from blinkpy.auth import Auth
+import os
+from dotenv import load_dotenv
 
 
 async def takePicture():
 
+    load_dotenv()
     blink = ""
 
     async with ClientSession() as session:
@@ -13,8 +16,8 @@ async def takePicture():
         blink = Blink(session=session)
 
         # Can set no_prompt when initializing auth handler
-        auth = Auth({"username": "ravikumar.guntuku@gmail.com",
-                    "password": "Fadd3n$6120"}, no_prompt=True)
+        auth = Auth({"username": os.getenv("BLINK_USERNAME"),
+                    "password": os.getenv("BLINK_PASSWORD")}, no_prompt=True)
         blink.auth = auth
         await blink.start()
 
